@@ -1,6 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Message} from '../message.model';
 import {MessagesService} from '../messages.service';
+import {ActivatedRoute, Router} from "@angular/router";
 
 
 @Component({
@@ -21,9 +22,10 @@ export class MessageEditComponent implements OnInit {
   onSendMessage() {
     const subj = this.subjectRef.nativeElement.value;
     const msg = this.msgTextRef.nativeElement.value;
-    const newMessage = new Message('id', subj, msg, 'Daniel');
+    const newMessage = new Message('id', subj, msg, "1");
     this.addMessageEvent.emit(newMessage);
     this.messagesService.addMessage(newMessage);
+    this.onClear();
   }
 
   onClear() {

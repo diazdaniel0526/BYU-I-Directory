@@ -1,24 +1,25 @@
 <div class="row">
   <div class="col-xs-12">
     <div class="panel panel-default">
-      <div class="panel-heading clearfix">{{ contact.name }}
+      <div class="panel-heading clearfix">
+        <h4><strong>{{ contact.name }}</strong></h4>
         <div>
           <span class="pull-left">
               <img
                 [src]="contact.imageUrl"
                 alt="{{ contact.name }}"
                 class="img-responsive"
-                style="max-height: 60px;">
+                style="max-height: 90px;">
           </span>
         </div>
         <div class="pull-right">
-          <button class="btn btn-primary">Edit</button>
-          <button class="btn btn-danger">Delete</button>
+          <a [routerLink]="['edit']" class="btn btn-primary">Edit</a>
+          <a (click)="onDelete()" class="btn btn-danger">Delete</a>
         </div>
       </div>
       <div class="panel-body">
-        <p>Email: {{contact.email}}</p>
-        <p>Phone: {{contact.phone}}</p>
+        <p><strong>Email:</strong> {{contact.email}}</p>
+        <p><strong>Phone:</strong> {{contact.phone}}</p>
         <div class="row">
           <div class="col-xs-12">
           </div>

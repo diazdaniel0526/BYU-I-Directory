@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import {DocumentsService} from "./documents/documents.service";
+import {ContactService} from "./contacts/contact.service";
+import {MessagesService} from "./messages/messages.service";
 
 @Component({
   selector: 'cms-root',
@@ -6,9 +9,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  selectedFeature = 'documents';
 
-  switchView(feature: string) {
-    this.selectedFeature = feature;
+  constructor(private documentService: DocumentsService,
+              private contactsService: ContactService,
+              private messagesService: MessagesService) {
+
   }
 }
