@@ -20,7 +20,7 @@ export class ContactService {
   }
 
   initContacts(){
-    return this.http.get('https://diazdanielcms.firebaseio.com/contacts.json')
+    return this.http.get('localhost:3000/contacts')
       .map((response: Response) => response.json())
       .subscribe(
         (data: Contact[]) => {
@@ -68,16 +68,28 @@ export class ContactService {
     return maxId;
   }
 
-  addContact(newContact: Contact) {
-    if (newContact === null) {
+  addContact(contact: Contact) {
+    if (!contact) {
       return;
     }
-    this.maxContactId++;
-    newContact.id = String(this.maxContactId);
-    this.contacts.push(newContact);
-    // let contactsListClone = this.contacts.slice();
-    // this.contactListChangedEvent.next(contactsListClone);
-    this.storeContacts();
+
+    const headers = new Headers({
+      "Content-Type": "application/json"
+    });
+
+    contact.id = '';
+    const strContact = JSON.stringify(contact);
+
+    this.http.post('localhost:3000/contacts', strContact, {headers: headers})
+      .map(
+        (response: Response) => {
+          return response.json().obj;
+        })
+      .subscribe(
+        (contacts: Contact[]) => {
+          this.contacts = contacts;
+          this.contactListChangedEvent.next(this.contacts.slice());
+        });
   }
 
   updateContact(originalContact: Contact,
@@ -85,28 +97,43 @@ export class ContactService {
     if (!originalContact || !newContact) {
       return;
     }
-    let pos = this.contacts.indexOf(originalContact);
+    const pos = this.contacts.indexOf(originalContact);
     if (pos < 0) {
       return;
     }
-    newContact.id = originalContact.id;
-    this.contacts[pos] = newContact;
-    // let contactsListClone = this.contacts.slice();
-    // this.contactListChangedEvent.next(contactsListClone)
-    this.storeContacts();
+
+    const headers = new Headers({
+      "Content-Type": "application/json"
+    });
+
+    const strContact = JSON.stringify(newContact);
+
+    this.http.patch('localhost:3000/contacts/' + originalContact.id, strContact, {headers: headers})
+      .map(
+        (response: Response) => {
+          return response.json().obj;
+        })
+      .subscribe(
+        (contacts: Contact[]) => {
+          this.contacts = contacts;
+          this.contactListChangedEvent.next(this.contacts.slice());
+        });
   }
 
   deleteContact(contact: Contact) {
     if (contact === null) {
       return;
     }
-    let pos = this.contacts.indexOf(contact);
-    if (pos < 0) {
-      return;
-    }
-    this.contacts.splice(pos, 1);
-    // let contactsListClone = this.contacts.slice();
-    // this.contactListChangedEvent.next(contactsListClone);
-    this.storeContacts();
+
+    this.http.delete('localhost:3000/contacts/' + contact.id)
+      .map(
+        (response: Response) => {
+          return response.json().obj;
+        })
+      .subscribe(
+        (contacts: Contact[]) => {
+          this.contacts = contacts;
+          this.contactListChangedEvent.next(this.contacts.slice());
+        });
   }
 }

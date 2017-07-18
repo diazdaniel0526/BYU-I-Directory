@@ -15,7 +15,7 @@ export class MessagesService {
   }
 
   initMessages(){
-    return this.http.get('https://diazdanielcms.firebaseio.com/messages.json')
+    return this.http.get('localhost:3000/documents')
       .map((response: Response) => response.json())
       .subscribe(
         (data: Message[]) => {
@@ -63,9 +63,33 @@ export class MessagesService {
   //   return null;
   // }
 
-  addMessage(message: Message) {
-    this.messages.push(message);
-    this.storeMessages();
-    this.messageChangeEvent.emit(this.messages.slice());
+  // addMessage(message: Message) {
+  //   this.messages.push(message);
+  //   this.storeMessages();
+  //   this.messageChangeEvent.emit(this.messages.slice());
+  // }
+
+  addDocument(message: Message) {
+    if (!message) {
+      return;
+    }
+
+    const headers = new Headers({
+      "Content-Type": "application/json"
+    });
+
+    message.id = '';
+    const strMessage = JSON.stringify(message);
+
+    this.http.post('localhost:3000/messages', strMessage, {headers: headers})
+      .map(
+        (response: Response) => {
+          return response.json().obj;
+        })
+      .subscribe(
+        (messages: Message[]) => {
+          this.messages = messages;
+          this.messageChangeEvent.next(this.messages.slice());
+        });
   }
 }
