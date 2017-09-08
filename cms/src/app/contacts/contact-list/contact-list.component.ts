@@ -1,22 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 
 import { Contact } from '../contact.model';
+import {ContactService} from '../contact.service';
+import {Subscription} from 'rxjs/Subscription';
+
 
 @Component({
   selector: 'cms-contact-list',
   templateUrl: './contact-list.component.html',
   styleUrls: ['./contact-list.component.css']
 })
-export class ContactListComponent implements OnInit {
-  contacts: Contact[] = [
-    new Contact('1', 'Bro. Jackson', 'jackson@byui.edu', '208-496-3771',
-      'https://web.byui.edu/Directory/Employee/jacksonk.jpg', null),
-    new Contact('2', 'Bro. Barzee', 'jackson@byui.edu', '208-496-3768',
-      'https://web.byui.edu/Directory/Employee/barzeer.jpg', null),
-  ];
-  constructor() { }
+export class ContactListComponent implements OnInit, OnDestroy {
+  contacts: Contact[] = [];
+  private subscription: Subscription;
+  term: string;
+
+  constructor(private contactService: ContactService) {
+    this.contacts = this.contactService.getContacts();
+  }
 
   ngOnInit() {
+    this.subscription = this.contactService.contactListChangedEvent
+      .subscribe(
+        (contact: Contact[]) => {
+          this.contacts = contact;
+        }
+      );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  onKeyPress(value: string) {
+    this.term = value;
   }
 
 }
